@@ -328,7 +328,7 @@ EOF
 		  UNAME_p=${NANO_ARCH} UNAME_m=${NANO_ARCH} \
 		  make WRKDIRPREFIX=/usr/workdir FETCH_ARGS=-pRr -C /usr/ports/$1 \
                   install package BATCH=yes -DWITH_PKGNG \
-		  WITHOUT=\"NLS X11 DOCS EXAMPLES\" -DWITH_SSP_PORTS $2 clean'
+		  WITHOUT=\"NLS X11 MIT DOCS EXAMPLES\" -DWITH_SSP_PORTS $2 clean'
 			else
        			CR 'env TARGET=${NANO_ARCH} TARGET_ARCH=${NANO_ARCH} \
 		  MACHINE=${NANO_ARCH} MACHINE_ARCH=${NANO_ARCH} OSVERSION=${FBSD_DST_OSVERSION} \
@@ -336,14 +336,14 @@ EOF
 		  UNAME_p=${NANO_ARCH} UNAME_m=${NANO_ARCH} \
 		  make WRKDIRPREFIX=/usr/workdir FETCH_ARGS=-pRr -C /usr/ports/$1 \
                   install BATCH=yes -DWITH_PKGNG \
-		  WITHOUT=\"NLS X11 DOCS EXAMPLES\" -DWITH_SSP_PORTS $2 clean'
+		  WITHOUT=\"NLS X11 MIT DOCS EXAMPLES\" -DWITH_SSP_PORTS $2 clean'
           		CR 'env TARGET=${NANO_ARCH} TARGET_ARCH=${NANO_ARCH} \
 		  MACHINE=${NANO_ARCH} MACHINE_ARCH=${NANO_ARCH} OSVERSION=${FBSD_DST_OSVERSION} \
 		  UNAME_r=${FBSD_DST_RELEASE} UNAME_v=${FBSD_DST_RELEASE} \
 		  UNAME_p=${NANO_ARCH} UNAME_m=${NANO_ARCH} \
 		  make WRKDIRPREFIX=/usr/workdir FETCH_ARGS=-pRr -C /usr/ports/$1 \
                   package BATCH=yes -DWITH_PKGNG \
-		  WITHOUT=\"NLS X11 DOCS EXAMPLES\" -DWITH_SSP_PORTS $2 clean'
+		  WITHOUT=\"NLS X11 MIT DOCS EXAMPLES\" -DWITH_SSP_PORTS $2 clean'
 			fi
 		rm \${NANO_WORLDDIR}/etc/resolv.conf
                	rm -rf \${NANO_WORLDDIR}/usr/obj
@@ -412,10 +412,14 @@ add_port "sysutils/ipmitool"
 # Add sudo for fine permission management
 add_port "security/sudo"
 
+# Add the pam_krb5 module from packages
+add_port "security/pam_krb5" "WITH=\"HEIMDAL\""
+
 # Add mpd5, a multi-link PPP protocol server (netgraph dependent)
 add_port "net/mpd5"
 
-add_port "benchmarks/iperf"
+add_port "benchmarks/iperf" "WITH=\"IPV6\""
+add_port "benchmarks/iperf3"
 
 # Python (being ansible manageable)
 add_port "devel/libffi"
