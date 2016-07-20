@@ -27,31 +27,39 @@ die() { echo -n "EXIT: " >&2; echo "$@" >&2; exit 1; }
 [ ! -d ${IMAGES_DIR} ] && die "Can't found destination dir for storing images"
 
 # List of SVN revision to build image for
-# 265145 to 274745
+# For each image by week
+#  svnlite log | grep 'r.*|.*|.*(Sun'
+# 274745 to xxx
+# From Sunday 22 March, to each last commit of sundy of each week
+# and if build failed, take the last monday commit and if it failed again
+# take the last tusday commit
+# Failed:
+# 299244
+# 299288
+# 
 SVN_REV_LIST='
-285151
-285051
-285046
-284728
-285000
-284500
-284000
-283542
-283000
-282500
-282000
-281500
-281000
-280500
-280000
-279500
-279000
-278500
-278000
-277500
-277000
-276500
-276000
+293069
+293643
+294235
+294694
+295106
+295385
+295618
+295869
+296167
+296435
+296813
+297086
+297322
+297529
+297791
+298166
+298553
+298902
+299288
+299866
+300438
+300974
 '
 
 # Name of the BSDRP project

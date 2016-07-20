@@ -9,7 +9,7 @@
 ################## Common section #################
 
 # Console port speed
-COM_SPEED=38400
+COM_SPEED=115200
 # Where cust_pkg() finds packages to install
 NANO_PACKAGE_DIR=${NANO_TOOLS}/Pkg
 NANO_PACKAGE_LIST="*"
@@ -22,6 +22,7 @@ NANO_ARCH=${TARGET_ARCH}
 # BOOT_COMCONSOLE_SPEED is useless because we using /boot.config with -Sspeed option
 CONF_BUILD='
 MALLOC_PRODUCTION=
+BOOT_BOOT0_COMCONSOLE_SPEED=0
 '
 
 # Options to put in make.conf during installworld only
@@ -39,6 +40,7 @@ WITHOUT_KERNEL_SYMBOLS=
 # WITHOUT_KVM= and WITHOUT_KVM_SUPPORT= prevent buildworld to complet (don't know why)
 
 CONF_WORLD='
+WITHOUT_MODULES=cxgb mlxen mlx4 mlx5
 WITHOUT_ACCT=
 WITHOUT_AMD=
 WITHOUT_APM=
@@ -57,6 +59,7 @@ WITHOUT_CALENDAR=
 WITHOUT_CCD=
 WITHOUT_CTM=
 WITHOUT_CVS=
+WITHOUT_DEBUG_FILES=
 WITHOUT_DICT=
 WITHOUT_EE=
 WITHOUT_EXAMPLES=
@@ -81,6 +84,7 @@ WITHOUT_JAIL=
 WITHOUT_KERBEROS=
 WITHOUT_KERBEROS_SUPPORT=
 WITHOUT_LIB32=
+WITHOUT_LLDB=
 WITHOUT_LOCALES=
 WITHOUT_LOCATE=
 WITHOUT_LPR=
@@ -119,6 +123,7 @@ WITHOUT_ZFS=
 WITH_GCC=
 WITH_IDEA=
 WITH_OFED=
+WITH_FAST_DEPEND=
 '
 
 # Customize commands.
@@ -198,7 +203,7 @@ add_netrate () {
         CR 'make clean -C /usr/src/tools/tools/${TOOL}'
        	CR 'env TARGET=${NANO_ARCH} TARGET_ARCH=${NANO_ARCH} \
             MACHINE=${NANO_ARCH} MACHINE_ARCH=${NANO_ARCH} OSVERSION=${FBSD_DST_OSVERSION} \
-            UNAME_r=${FBSD_DST_RELEASE} UNAME_v=${FBSD_DST_RELEASE} \
+            UNAME_r=${FBSD_DST_RELEASE} UNAME_v="FreeBSD ${FBSD_DST_RELEASE}" \
             UNAME_p=${NANO_ARCH} UNAME_m=${NANO_ARCH} \
             make WRKDIRPREFIX=/usr/workdir -C /usr/src/tools/tools/${TOOL}'
         # each Makefile have a different variable names
@@ -230,7 +235,7 @@ add_quagga-bgp-netgen () {
     mkdir -p ${NANO_WORLDDIR}/usr/workdir
     CR 'env TARGET=${NANO_ARCH} TARGET_ARCH=${NANO_ARCH} \
 		MACHINE=${NANO_ARCH} MACHINE_ARCH=${NANO_ARCH} OSVERSION=${FBSD_DST_OSVERSION} \
-		UNAME_r=${FBSD_DST_RELEASE} UNAME_v=${FBSD_DST_RELEASE} \
+		UNAME_r=${FBSD_DST_RELEASE} UNAME_v="FreeBSD ${FBSD_DST_RELEASE}" \
 		UNAME_p=${NANO_ARCH} UNAME_m=${NANO_ARCH} \
         make WRKDIRPREFIX=/usr/workdir -C /usr/src/'
     mv ${NANO_WORLDDIR}/usr/src/quagga-bgp-netgen ${NANO_WORLDDIR}/usr/local/bin
@@ -273,11 +278,11 @@ bsdrp_custom () {
 	sed -i "" -e "s/rc.conf.local/rc.conf.local \/etc\/rc.conf.misc/g" ${NANO_WORLDDIR}/etc/defaults/rc.conf
 
 	# Compress the kernel (save 10Mb)
-	if [ -f ${NANO_WORLDDIR}/boot/kernel/kernel ]; then
-		if ! gzip -v9 ${NANO_WORLDDIR}/boot/kernel/kernel; then
-			echo "Error during zipping the kernel"
-		fi
-	fi
+	#if [ -f ${NANO_WORLDDIR}/boot/kernel/kernel ]; then
+	#	if ! gzip -v9 ${NANO_WORLDDIR}/boot/kernel/kernel; then
+	#		echo "Error during zipping the kernel"
+	#	fi
+	#fi
 	# Remove some of the folders (without share/snmp)
 	# usr/include : 15MB
 	FOLDERS_TO_REMOVE='

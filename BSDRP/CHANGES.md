@@ -1,62 +1,242 @@
-# Release 1.58 (not released)
+# Release 1.60 (not released)
 
 ## New features
+* New fresh installation needs 1GB disk size, upgrade still possible on 512MB disks
+* Upgraded to FreeBSD 10.3-RELEASE-p2
+* Backport shutdown +second option from -head
+
+## Bug fix
+* Disable fastforwarding too soon (tryforward is not in 10.3): Re-enable it
+* Re-add netmap-ipfw
+* Add a pf with fragmentation timeout fix
+  source: https://lists.freebsd.org/pipermail/freebsd-pf/2016-May/008044.html
+* Disable net.bpf.zerocopy_enable: It created problem with tcpdump on 10.3
+
+## Updated packages
+* bird to 1.6.0
+* exabgp to 3.4.16
+* iperf to 3.1.3
+* isc-dhcp43-server to 4.3.4
+* openvpn to 3.11
+
+## package list
+* bird-1.6.0
+* bird6-1.6.0
+* bsnmp-regex-0.6_1
+* bsnmp-ucd-0.4.2
+* ca_root_nss-3.25
+* dhcprelya-4.9
+* dlmalloc-2.8.6
+* dma-0.11,1
+* easy-rsa-3.0.1_1
+* exabgp-3.4.16
+* flashrom-0.9.9
+* freevrrpd-1.1_1
+* indexinfo-0.2.4
+* iperf-2.0.5
+* iperf3-3.1.3
+* ipmitool-1.8.17_1
+* ipsec-tools-0.8.2_1
+* isc-dhcp43-server-4.3.4
+* libev-4.22,1
+* libevent2-2.0.22_1
+* libffi-3.2.1
+* libgcrypt-1.7.1
+* libgpg-error-1.23
+* libpci-3.5.1
+* libsodium-1.0.8
+* lzo2-2.09
+* mlvpn-2.3.1
+* monit-5.18
+* mpd5-5.8
+* mrouted-3.9.7_1
+* netmap-ipfw-0.1
+* openldap-client-2.4.44
+* openvpn-2.3.11_1
+* openvpn-auth-radius-2.1_3
+* pciids-20160621
+* pim6-tools-20061214
+* pim6dd-0.2.1.0.a.15
+* pim6sd-2.1.0.a.23
+* pimd-2.3.2
+* pimdd-0.2.1.0_2
+* pkg-1.8.6
+* pmacct-0.14.3_3
+* py27-setuptools27-23.1.0
+* python2-2_3
+* python27-2.7.12
+* quagga-1.0.20160315
+* readline-6.3.8
+* strongswan-5.4.0
+* sudo-1.8.17p1
+* tayga-0.9.2
+* tmux-2.1_1
+* ucarp-1.5.2_2
+
+-----------------------------------------------------
+
+# Release 1.59 (21/04/2016)
+
+## New features
+* Upgraded to FreeBSD 10.3-RELEASE
+* New package: mlvpn (aggregated network links in order to benefit from
+  the bandwidth of multiple links)
+
+## Updated packages
+* bsnmp-ucd to 0.4.2
+* dma to 0.11
+* dmidecode to 3.0
+* exabgp to 3.4.15
+* iperf3 to 3.1.2
+* monit to 5.17
+* mpd5 to 5.8
+* openvpn to 2.3.10
+* python to 2.7.11
+* quagga to 1.0.20160315
+* strongswan to 5.4.0
+
+## package list
+* bird-1.5.0_1
+* bird6-1.5.0_1
+* bsnmp-regex-0.6_1
+* bsnmp-ucd-0.4.2
+* ca_root_nss-3.22.2
+* dhcprelya-4.9
+* dlmalloc-2.8.6
+* dma-0.11,1
+* easy-rsa-3.0.1_1
+* exabgp-3.4.15
+* flashrom-0.9.9
+* freevrrpd-1.1_1
+* indexinfo-0.2.4
+* iperf-2.0.5
+* iperf3-3.1.2
+* ipmitool-1.8.15_1
+* ipsec-tools-0.8.2_1
+* isc-dhcp43-server-4.3.3P1_1
+* libev-4.20,1
+* libevent2-2.0.22_1
+* libffi-3.2.1
+* libgcrypt-1.6.5_1
+* libgpg-error-1.21
+* libpci-3.4.1
+* libsodium-1.0.8
+* lzo2-2.09
+* mlvpn-2.3.1
+* monit-5.17.1
+* mpd5-5.8
+* mrouted-3.9.7_1
+* openldap-client-2.4.44
+* openvpn-2.3.10_2
+* openvpn-auth-radius-2.1_3
+* pciids-20160412
+* pim6-tools-20061214
+* pim6dd-0.2.1.0.a.15
+* pim6sd-2.1.0.a.23
+* pimd-2.3.2
+* pimdd-0.2.1.0_2
+* pkg-1.7.2
+* pmacct-0.14.3_3
+* py27-setuptools27-20.0
+* python2-2_3
+* python27-2.7.11_1
+* quagga-1.0.20160315
+* readline-6.3.8
+* strongswan-5.4.0
+* sudo-1.8.16
+* tayga-0.9.2
+* tmux-2.1_1
+* ucarp-1.5.2_2
+
+-----------------------------------------------------
+
+# Release 1.58 (10/12/2015)
+
+## Important tip for upgrading "fresh 1.57 install"
+* Fresh BSDRP 1.57 installation contains an UFS label bug. And this bug need
+  to be fixed before starting the upgrade process.
+  A script is available for fixing this problem, here is how to use it:
+  fetch http://dev.bsdrp.net/fixlabel.sh
+  sh ./fixlabel.sh
+  and follow instructions
+
+## New features
+* Upgrade to 10.2-RELEASE-p8
 * Disable Chelsio NIC features useless in a simple router (cxgbe.toecaps_allowed=0)
-* Disable vlan_hwtso feature of the NIC too
+* Disable vlan_hwtso feature by default
+* Added an installation helper option: "system install <target-disk>"
+* Added userland symbols/debug in the debug archive
+* Serial port default speed is now set to 115200 bauds (new installation), an
+  upgrade will not change the previous console speed
 
 ## New packages
-* iperf3 (iperf is still because iperf3 didn't support multicast)
+* iperf 3.1
+* flashrom: Allow to upgrade BIOS on supported device
 
 ## Bug fixed
 * Fixed bad UFS labeling introduced on 1.57
+* Fixed 'config put/get' script
+* Boot0 will stop to reset serial speed at 9600 bauds
 
 ## Updated packages
+* ipmitool to 1.8.15
 * isc-dhcp43-server to 4.3.3
 * exabgp to 3.4.12
-* pimd to 2.3.0
+* monit to 5.15
+* mrouted to 3.9.7
+* strongswan to 5.3.5
+* tmux 2.1
 
 ## Package list
 * bird-1.5.0_1
 * bird6-1.5.0_1
 * bsnmp-regex-0.6_1
 * bsnmp-ucd-0.4.1
+* ca_root_nss-3.20.1
 * dhcprelya-4.9
 * dlmalloc-2.8.6
 * dma-v0.9_1,1
+* dmidecode-2.12_1
 * easy-rsa-2.2.2
-* exabgp-3.4.12
+* exabgp-3.4.12_1
+* flashrom-0.9.7_3
 * freevrrpd-1.1_1
-* indexinfo-0.2.3
+* indexinfo-0.2.4
 * iperf-2.0.5
-* ipmitool-1.8.14_1
+* iperf3-3.1.1
+* ipmitool-1.8.15_1
 * ipsec-tools-0.8.2_1
-* isc-dhcp43-server-4.3.2_1
+* isc-dhcp43-server-4.3.3
 * libevent2-2.0.22_1
 * libffi-3.2.1
-* libgcrypt-1.6.3
-* libgpg-error-1.19_1
+* libftdi-0.20_4
+* libgcrypt-1.6.4_2
+* libgpg-error-1.20_1
+* libpci-3.4.0
 * lzo2-2.09
-* mcast-tools-20061214_1
-* monit-5.14
+* monit-5.15
 * mpd5-5.7_3
-* mrouted-3.9.6_1
-* netmap-ipfw-0.1
-* openldap-client-2.4.41
+* mrouted-3.9.7_1
+* openldap-client-2.4.43
 * openvpn-2.3.8
 * openvpn-auth-radius-2.1_3
-* pimd-2.2.1
-* pimdd-0.2.1.0_1
-* pkg-1.5.6
+* pciids-20151205
+* pim6-tools-20061214
+* pim6dd-0.2.1.0.a.15
+* pim6sd-2.1.0.a.23
+* pimd-2.3.1
+* pimdd-0.2.1.0_2
+* pkg-1.6.2
 * pmacct-0.14.3_3
-* py27-setuptools27-17.0
+* py27-setuptools27-18.7
 * python2-2_3
-* python27-2.7.10
+* python27-2.7.10_1
 * quagga-0.99.24.1_2
 * readline-6.3.8
-* strongswan-5.3.2
-* sudo-1.8.14p3
+* strongswan-5.3.5_1
+* sudo-1.8.15
 * tayga-0.9.2
-* tmux-2.0
+* tmux-2.1
 * ucarp-1.5.2_2
 
 -----------------------------------------------------

@@ -9,7 +9,7 @@
 ################## Common section #################
 
 # Console port speed
-COM_SPEED=38400
+COM_SPEED=115200
 # Where cust_pkg() finds packages to install
 NANO_PACKAGE_DIR=${NANO_TOOLS}/Pkg
 NANO_PACKAGE_LIST="*"
@@ -20,15 +20,19 @@ NANO_ARCH=${TARGET_ARCH}
 
 # Options to put in make.conf during buildworld only
 # BOOT_COMCONSOLE_SPEED is useless because we using /boot.config with -Sspeed option
+# But for baud higher than 9600 is not supported by boot0:
+#  then we let the speed already configured by the BIOS by setting it to 0
 CONF_BUILD='
 MALLOC_PRODUCTION=
+BOOT_BOOT0_COMCONSOLE_SPEED=0
 '
 
 # Options to put in make.conf during installworld only
 # Do not use: WITHOUT_TOOLCHAIN=, because installing port need it
 # Do not use: WITHOUT_INSTALLLIB=, because perl can't compile
 # We would compile symbol files, but not install them by default
-CONF_INSTALL=''
+CONF_INSTALL='
+'
 
 # Options to put in make.conf during both build- & installworld.
 # See the file /usr/src/tools/build/options or man src.conf for details
@@ -112,12 +116,12 @@ WITHOUT_TIMED=
 WITHOUT_UNBOUND=
 WITHOUT_USB_GADGET_EXAMPLES=
 WITHOUT_WIRELESS=
-WITHOUT_WIRELESS_SUPPORT=
 WITHOUT_WPA_SUPPLICANT_EAPOL=
 WITHOUT_ZFS=
 WITH_GCC=
 WITH_IDEA=
 WITH_OFED=
+WITH_DEBUG_FILES=
 '
 
 # Customize commands.
@@ -197,7 +201,7 @@ add_netrate () {
         CR 'make clean -C /usr/src/tools/tools/${TOOL}'
        	CR 'env TARGET=${NANO_ARCH} TARGET_ARCH=${NANO_ARCH} \
             MACHINE=${NANO_ARCH} MACHINE_ARCH=${NANO_ARCH} OSVERSION=${FBSD_DST_OSVERSION} \
-            UNAME_r=${FBSD_DST_RELEASE} UNAME_v=${FBSD_DST_RELEASE} \
+            UNAME_r=${FBSD_DST_RELEASE} UNAME_v="FreeBSD ${FBSD_DST_RELEASE}" \
             UNAME_p=${NANO_ARCH} UNAME_m=${NANO_ARCH} \
             make WRKDIRPREFIX=/usr/workdir -C /usr/src/tools/tools/${TOOL}'
         # each Makefile have a different variable names
@@ -229,7 +233,7 @@ add_quagga-bgp-netgen () {
     mkdir -p ${NANO_WORLDDIR}/usr/workdir
     CR 'env TARGET=${NANO_ARCH} TARGET_ARCH=${NANO_ARCH} \
 		MACHINE=${NANO_ARCH} MACHINE_ARCH=${NANO_ARCH} OSVERSION=${FBSD_DST_OSVERSION} \
-		UNAME_r=${FBSD_DST_RELEASE} UNAME_v=${FBSD_DST_RELEASE} \
+		UNAME_r=${FBSD_DST_RELEASE} UNAME_v="FreeBSD ${FBSD_DST_RELEASE}" \
 		UNAME_p=${NANO_ARCH} UNAME_m=${NANO_ARCH} \
         make WRKDIRPREFIX=/usr/workdir -C /usr/src/'
     mv ${NANO_WORLDDIR}/usr/src/quagga-bgp-netgen ${NANO_WORLDDIR}/usr/local/bin
@@ -249,7 +253,7 @@ add_apuled () {
     mkdir -p ${NANO_WORLDDIR}/usr/workdir
     CR 'env TARGET=${NANO_ARCH} TARGET_ARCH=${NANO_ARCH} \
 		MACHINE=${NANO_ARCH} MACHINE_ARCH=${NANO_ARCH} OSVERSION=${FBSD_DST_OSVERSION} \
-		UNAME_r=${FBSD_DST_RELEASE} UNAME_v=${FBSD_DST_RELEASE} \
+		UNAME_r=${FBSD_DST_RELEASE} UNAME_v="FreeBSD ${FBSD_DST_RELEASE}" \
 		UNAME_p=${NANO_ARCH} UNAME_m=${NANO_ARCH} \
         make WRKDIRPREFIX=/usr/workdir -C /tmp/apuled/'
     mv ${NANO_WORLDDIR}/tmp/apuled/apuled.ko ${NANO_WORLDDIR}/boot/modules/
@@ -347,7 +351,7 @@ EOF
 			if grep -q NO_STAGE \${NANO_WORLDDIR}/usr/ports/$1/Makefile; then
    					CR 'env TARGET=${NANO_ARCH} TARGET_ARCH=${NANO_ARCH} \
 		  MACHINE=${NANO_ARCH} MACHINE_ARCH=${NANO_ARCH} OSVERSION=${FBSD_DST_OSVERSION} \
-		  UNAME_r=${FBSD_DST_RELEASE} UNAME_v=${FBSD_DST_RELEASE} \
+		  UNAME_r=${FBSD_DST_RELEASE} UNAME_v=\"FreeBSD ${FBSD_DST_RELEASE}\" \
 		  UNAME_p=${NANO_ARCH} UNAME_m=${NANO_ARCH} \
 		  make WRKDIRPREFIX=/usr/workdir FETCH_ARGS=-pRr -C /usr/ports/$1 \
                   install package BATCH=yes -DWITH_PKGNG \
@@ -355,14 +359,14 @@ EOF
 			else
        			CR 'env TARGET=${NANO_ARCH} TARGET_ARCH=${NANO_ARCH} \
 		  MACHINE=${NANO_ARCH} MACHINE_ARCH=${NANO_ARCH} OSVERSION=${FBSD_DST_OSVERSION} \
-		  UNAME_r=${FBSD_DST_RELEASE} UNAME_v=${FBSD_DST_RELEASE} \
+		  UNAME_r=${FBSD_DST_RELEASE} UNAME_v=\"FreeBSD ${FBSD_DST_RELEASE}\" \
 		  UNAME_p=${NANO_ARCH} UNAME_m=${NANO_ARCH} \
 		  make WRKDIRPREFIX=/usr/workdir FETCH_ARGS=-pRr -C /usr/ports/$1 \
                   install BATCH=yes -DWITH_PKGNG \
 		  WITHOUT=\"NLS X11 DOCS EXAMPLES\" -DWITH_SSP_PORTS $2 clean'
           		CR 'env TARGET=${NANO_ARCH} TARGET_ARCH=${NANO_ARCH} \
 		  MACHINE=${NANO_ARCH} MACHINE_ARCH=${NANO_ARCH} OSVERSION=${FBSD_DST_OSVERSION} \
-		  UNAME_r=${FBSD_DST_RELEASE} UNAME_v=${FBSD_DST_RELEASE} \
+		  UNAME_r=${FBSD_DST_RELEASE} UNAME_v=\"FreeBSD ${FBSD_DST_RELEASE}\" \
 		  UNAME_p=${NANO_ARCH} UNAME_m=${NANO_ARCH} \
 		  make WRKDIRPREFIX=/usr/workdir FETCH_ARGS=-pRr -C /usr/ports/$1 \
                   package BATCH=yes -DWITH_PKGNG \
@@ -407,15 +411,12 @@ add_port "print/indexinfo"
 add_port "security/libgpg-error"
 add_port "security/libgcrypt"
 add_port "devel/readline"
-add_port "net/quagga" "WITH=\"DLMALLOC ISISD OSPF_NSSA OSPF_OPAQUE_LSA TCPSOCKETS\" WITHOUT=\"PIMD\""
+add_port "net/quagga" "WITH=\"DLMALLOC ISISD OSPF_OPAQUE_LSA TCPSOCKETS\" WITHOUT=\"PIMD\""
 # Quagga install some software that we don't need anymore after install: devel/libtool*, devel/gettext, /devel/gmake, /lang/gawk
 
 # Add Bird
 add_port "net/bird"
 add_port "net/bird6"
-
-# high-performance ipfw netmap
-add_port "net/netmap-ipfw"
 
 # Add FreeVRRPd (netgraph dependent)
 add_port "net/freevrrpd"
@@ -426,9 +427,6 @@ add_port "security/ipsec-tools" "WITH=\"RC5 IDEA RADIUS LDAP\""
 
 # IKEv2
 add_port "security/strongswan" "WITHOUT=\"EAPAKA3GPP2 EAPSIMFILE SQLITE UNBOUND LOADTESTER TESTVECTOR\""
-
-#pf top
-#add_port "sysutils/pftop"
 
 #IP accounting tool
 add_port "net-mgmt/pmacct"
@@ -480,6 +478,13 @@ add_port "security/sudo"
 # Add mpd5, a multi-link PPP protocol server (netgraph dependent)
 add_port "net/mpd5"
 
+# high-performance (bridge only) netmap-ipfw and netmap-fwd
+if [ ${NANO_ARCH} = "amd64" ]; then
+    #add_port "net/netmap-ipfw"
+    add_port "textproc/libucl"
+    add_port "net/netmap-fwd"
+fi
+
 # Add openvpn
 add_port "security/easy-rsa"
 add_port "archivers/lzo2"
@@ -488,7 +493,8 @@ add_port "security/openvpn-auth-radius"
 
 # Add some benchmark tools: iperf ant netpipe, These tools will help us to tune BSDRP for better perf
 #add_port "benchmarks/netpipe" 
-add_port "benchmarks/iperf3"
+add_port "benchmarks/iperf" "WITH=\"IPV6\""
+#add_port "benchmarks/iperf3"
 
 #add_port "comms/conserver-com"
 #add_port "comms/ser2net"
@@ -507,6 +513,19 @@ add_port "net/exabgp"
 #add_port "emulators/open-vm-tools" "-DWITHOUT_X11 -DWITHOUT_LIBNOTIFY -DWITHOUT_FUSE -DWITHOUT_ICU"
 #add_port "emulators/virtualbox-ose-additions/" "-DWITHOUT_X11 -DWITHOUT_HAL"
 
+# Allow fetching from SSL site
+add_port "security/ca_root_nss"
+
+# Permit BIOS upgrade
+#add_port "sysutils/dmidecode"
+ # Curl is just a build-deps of cmake (needed by libftdi)
+ # But curl need base kerberos, then we remove this deps
+ # And we de-install curl on the custom script
+ #add_port "ftp/curl" "WITH=\"GSSAPI_NONE\" WITHOUT=\"GSSAPI_BASE CA_BUNDLE
+#add_port "devel/libftdi" "WITHOUT=\"BOOST PYTHON\""
+  add_port "misc/pciids"
+ add_port "devel/libpci"
+add_port "sysutils/flashrom" "WITHOUT=\"DMIDECODE FTDI\""
 #### End of port list section ####
 
 # Add netrate tools
@@ -531,6 +550,7 @@ cleanup_ports () {
 	#   pkg didn't delete all MAN1 page related to perl too
 	[ -d ${NANO_WORLDDIR}/usr/local/lib/perl5 ] && rm -rf ${NANO_WORLDDIR}/usr/local/lib/perl5
 	[ -f ${NANO_WORLDDIR}/usr/local/man/man1/perl.1 ] && rm ${NANO_WORLDDIR}/usr/local/man/man1/perl*
+	[ -f ${NANO_WORLDDIR}/tmp/PERL5_DEFAULT ] && rm ${NANO_WORLDDIR}/tmp/PERL5_DEFAULT
 	set -e
 }
 
@@ -564,7 +584,8 @@ bsdrp_custom () {
 	ln -s ../etc/cron ${NANO_WORLDDIR}/var/cron	
 	
 	# Add /etc/rc.conf.misc into the /etc/default/rc.conf
-	sed -i "" -e "s/rc.conf.local/rc.conf.local \/etc\/rc.conf.misc/g" ${NANO_WORLDDIR}/etc/defaults/rc.conf
+	#echo 'rc_conf_files+=/etc/rc.conf.misc' >> ${NANO_WORLDDIR}/etc/rc.conf
+	#sed -i "" -e "s/rc.conf.local/rc.conf.local \/etc\/rc.conf.misc/g" ${NANO_WORLDDIR}/etc/defaults/rc.conf
 
     # configure bsnmp
     cat <<EOF >>${NANO_WORLDDIR}/etc/snmpd.config
@@ -588,7 +609,7 @@ EOF
 		CR 'chown -R quagga:quagga /usr/local/etc/quagga'
 
 	# Compress the kernel (save 10Mb)
-	# Disabling: dtrace didn't support compressed kernel
+	# Disabled: dtrace didn't support compressed kernel
 	#if [ -f ${NANO_WORLDDIR}/boot/kernel/kernel ]; then
 	#	if ! gzip -v9 ${NANO_WORLDDIR}/boot/kernel/kernel; then
 	#		echo "Error during zipping the kernel"
@@ -606,6 +627,8 @@ usr/local/share/examples
 usr/include
 usr/share/examples
 usr/share/info
+usr/share/man/man3
+usr/share/man/man9
 usr/share/me
 usr/share/pc-sysinstall
 usr/share/openssl
@@ -631,10 +654,16 @@ boot/boot1.efifat
 boot/loader.efi
 sbin/hastd
 sbin/hastctl
+usr/sbin/bsdconfig
+usr/share/man/man8/bsdconfig.8.gz
 usr/sbin/bhyve
 usr/sbin/bhyvectl
 usr/sbin/bhyveload
 usr/sbin/ctladm
+usr/sbin/ctld
+usr/share/man/man8/ctld.8.gz
+usr/sbin/hv_kvp_daemon
+usr/share/man/man8/hv_kvp_daemon.8.gz
 usr/bin/ctlstat
 usr/local/etc/rc.d/freevrrpd.sh.sample
 usr/share/misc/magic.mgc
@@ -656,86 +685,66 @@ usr/share/misc/termcap.db
 	# The list of these files was generated by a the output of:
 	# usr/src/tools/tools/build_option_survey
 	# Because it's a very time consuming script, output are online:
-	# http://phk.freebsd.dk/misc/build_options_stable_8_210741/
+	# https://people.freebsd.org/~olivier/build_option_survey_20160406/
 
-TOOLCHAIN_TO_REMOVE='
-usr/bin/addr2line
-usr/bin/gnu-ar
-usr/bin/as
-usr/bin/ld
-usr/bin/nm
-usr/bin/objcopy
-usr/bin/gnu-ranlib
-usr/bin/readelf
-usr/bin/size
-usr/bin/strings
-usr/bin/strip
-usr/bin/cc
-usr/bin/gcc
-usr/bin/gcpp
-usr/bin/cpp
-usr/bin/c++
-usr/bin/g++
+WITHOUT_TOOLCHAIN='
 usr/bin/CC
-usr/bin/c++filt
-usr/bin/gcov
-usr/bin/gdb
-usr/bin/gdbtui
-usr/bin/kgdb
+usr/bin/addr2line
 usr/bin/ar
-usr/bin/ranlib
+usr/bin/as
+usr/bin/byacc
+usr/bin/c++
+usr/bin/c++filt
 usr/bin/c89
 usr/bin/c99
-usr/bin/sum
-usr/bin/compile_et
-usr/bin/ctags
-usr/bin/file2c
-usr/bin/gprof
-usr/bin/od
-usr/bin/indent
-usr/bin/m4
-usr/bin/lex
-usr/bin/lex++
-usr/bin/flex
-usr/bin/flex++
-usr/bin/mt
-usr/bin/mkstr
-usr/bin/rpcgen
-usr/bin/unifdef
-usr/bin/unifdefall
-usr/bin/nvi
-usr/bin/vgrind
-usr/bin/lint
-usr/bin/xstr
-usr/bin/lzdec
-usr/bin/yacc
-usr/bin/yyfix
-usr/bin/byacc
-usr/bin/lzdec
+usr/bin/cc
 usr/bin/clang
 usr/bin/clang++
 usr/bin/clang-cpp
 usr/bin/clang-tblgen
-usr/bin/tblgen
+usr/bin/cpp
 usr/bin/crunchgen
 usr/bin/crunchide
-usr/libexec/cc1
-usr/libexec/cc1plus
-usr/libexec/cc1obj
-usr/libexec/vfontedpr
-usr/libexec/lint1
-usr/libexec/lint2
+usr/bin/ctags
+usr/bin/file2c
+usr/bin/flex
+usr/bin/flex++
+usr/bin/gdb
+usr/bin/gdbserver
+usr/bin/gdbtui
+usr/bin/indent
+usr/bin/kgdb
+usr/bin/ld
+usr/bin/ld.bfd
+usr/bin/lex
+usr/bin/lex++
+usr/bin/lint
+usr/bin/lldb
+usr/bin/llvm-tblgen
+usr/bin/mkstr
+usr/bin/nm
+usr/bin/objcopy
+usr/bin/objdump
+usr/bin/ranlib
+usr/bin/readelf
+usr/bin/rpcgen
+usr/bin/size
+usr/bin/strings
+usr/bin/strip
+usr/bin/unifdef
+usr/bin/unifdefall
+usr/bin/xstr
+usr/bin/yacc
+usr/lib/libfl.a
+usr/lib/libfl_p.a
+usr/lib/libl.a
+usr/lib/libl_p.a
+usr/lib/libln.a
+usr/lib/libln_p.a
 usr/sbin/btxld
 usr/sbin/config
-usr/sbin/i2c
-usr/sbin/rmt
-usr/share/misc/gprof.flat
-usr/share/misc/gprof.callg
-usr/share/misc/vgrindefs
-usr/share/misc/vgrindefs.db
-usr/share/tmac/tmac.vgrind
 '
-    for c in $TOOLCHAIN_TO_REMOVE
+    for c in $WITHOUT_TOOLCHAIN
     do
         if [ -f ${NANO_WORLDDIR}/$c ]; then
             echo "Removing ${NANO_WORLDDIR}/$c"
@@ -760,11 +769,7 @@ usr/share/tmac/tmac.vgrind
     find ${NANO_WORLDDIR} -type f -name \*.a | xargs rm
 
 	# Moving kerned & world debug symbols into debug.tar.xz file
-	if [ -f ${NANO_WORLDDIR}/boot/kernel/kernel.symbols ]; then
-		if [ ! -d ${NANO_WORLDDIR}/usr/lib/debug/boot/kernel ]; then
-			mkdir -p ${NANO_WORLDDIR}/usr/lib/debug/boot/kernel
-		fi
-		mv ${NANO_WORLDDIR}/boot/kernel/*.symbols ${NANO_WORLDDIR}/usr/lib/debug/boot/kernel
+	if [ -d ${NANO_WORLDDIR}/usr/lib/debug ]; then
 		tar cfvZ ${NANO_OBJ}/debug.tar.xz -C ${NANO_WORLDDIR}/usr/lib debug
 	fi
 	[ -d ${NANO_WORLDDIR}/usr/lib/debug ] && rm -rf ${NANO_WORLDDIR}/usr/lib/debug
@@ -782,12 +787,13 @@ usr/share/tmac/tmac.vgrind
 # Enable only serial system only
 bsdrp_console_serial () {
 	# Since r266895, console is set as onifconsole
-	sed -i "" -e /ttyu0/s/onifconsole/on/ ${NANO_WORLDDIR}/etc/ttys
-	sed -i "" -e /ttyu[13]/s/off/onifconsole/ ${NANO_WORLDDIR}/etc/ttys
-	sed -i "" -e /ttyu[13]/s/dialup/vt100/ ${NANO_WORLDDIR}/etc/ttys
+	# Since r289634, 4 firsts serials console are set as onifconsole
+	#sed -i "" -e /ttyu0/s/onifconsole/on/ ${NANO_WORLDDIR}/etc/ttys
+	#sed -i "" -e /ttyu[13]/s/off/onifconsole/ ${NANO_WORLDDIR}/etc/ttys
+	#sed -i "" -e /ttyu[13]/s/dialup/vt100/ ${NANO_WORLDDIR}/etc/ttys
 
     # Disable getty on syscons devices
-    sed -i "" -e '/^ttyv[0-8]/s/on /off /' ${NANO_WORLDDIR}/etc/ttys
+    #sed -i "" -e '/^ttyv[0-8]/s/on /off /' ${NANO_WORLDDIR}/etc/ttys
 
     # Tell loader to use serial console early.
     echo "-S${COM_SPEED} -h" > ${NANO_WORLDDIR}/boot.config
@@ -814,8 +820,9 @@ bsdrp_console_dual () {
 # Standard vga console, but permit serial port to be use as vt100 console
 bsdrp_console_vga () {
 	# Enable onifconsole to ttyu1 to ttyu3
-	sed -i "" -e /ttyu[13]/s/off/onifconsole/ ${NANO_WORLDDIR}/etc/ttys
-	sed -i "" -e /ttyu[13]/s/dialup/vt100/ ${NANO_WORLDDIR}/etc/ttys
+	# Since r289634, 4 firsts serials console are set as onifconsole
+	#sed -i "" -e /ttyu[13]/s/off/onifconsole/ ${NANO_WORLDDIR}/etc/ttys
+	#sed -i "" -e /ttyu[13]/s/dialup/vt100/ ${NANO_WORLDDIR}/etc/ttys
 
 	# Tell loader to use vga and serial and set serial speed (boot0 will be vga only)
     echo "-S${COM_SPEED} -Dh" > ${NANO_WORLDDIR}/boot.config 
