@@ -380,7 +380,7 @@ add_port "net/freevrrpd"
 add_port "sysutils/pftop"
 
 #IP accounting tool
-add_port "net-mgmt/pmacct"
+add_port "net-mgmt/pmacct" "WITH=\"THREADS\""
 
 # Add IPv6 multicast routing daemons and tools
 add_port "net/pim6-tools"
@@ -413,7 +413,7 @@ add_port "sysutils/ipmitool"
 add_port "security/sudo"
 
 # Add the pam_krb5 module from packages
-add_port "security/pam_krb5" "WITH=\"HEIMDAL\""
+add_port "security/pam_krb5" "WITH=\"HEIMDAL_BASE\""
 
 # Add mpd5, a multi-link PPP protocol server (netgraph dependent)
 add_port "net/mpd5"
