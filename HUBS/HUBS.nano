@@ -9,7 +9,7 @@
 ################## Common section #################
 
 # Console port speed
-COM_SPEED=57600
+COM_SPEED=115200
 # Where cust_pkg() finds packages to install
 NANO_PACKAGE_DIR=${NANO_TOOLS}/Pkg
 NANO_PACKAGE_LIST="*"
@@ -426,6 +426,10 @@ add_port "devel/libffi"
 add_port "lang/python27"
 add_port "lang/python2"
 add_port "devel/py-setuptools27"
+
+# Add openvpn
+add_port "security/openvpn"
+add_port "security/openvpn-auth-radius"
 
 cleanup_ports () {
 		# When port are build, they install build dependency that are not usefull for running the port
